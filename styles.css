@@ -1103,10 +1103,6 @@ footer {
     filter: drop-shadow(0 0 30px rgba(255, 255, 220, 0.6));
 }
 
-.moon.waxing-crescent {
-    /* No extra styles needed - emoji is the moon */
-}
-
 /* Stars */
 .stars {
     position: absolute;
