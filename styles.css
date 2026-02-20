@@ -1103,6 +1103,13 @@ footer {
     filter: drop-shadow(0 0 30px rgba(255, 255, 220, 0.6));
 }
 
+.emoji {
+    -webkit-text-fill-color: initial;
+    background: none;
+    background-clip: initial;
+    -webkit-background-clip: initial;
+}
+
 /* Stars */
 .stars {
     position: absolute;
