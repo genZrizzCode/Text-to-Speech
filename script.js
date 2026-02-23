@@ -17,7 +17,7 @@ const textDisplay = document.getElementById('text-display');
 const darkModeToggle = document.getElementById('dark-mode-toggle');
 const moon = document.getElementById('moon');
 const starsContainer = document.getElementById('stars');
-const pdfInput = document.getElementById('pdf-input');
+const fileInput = document.getElementById('file-input');
 
 // PDF.js worker (required for parsing PDFs in the browser)
 if (typeof pdfjsLib !== 'undefined') {
@@ -68,11 +68,10 @@ textInput.addEventListener('input', () => {
     updateTextDisplay();
 });
 
-// PDF upload: extract text and put in textarea
+// PDF: extract text
 async function extractTextFromPDF(file) {
     if (typeof pdfjsLib === 'undefined') {
-        status.textContent = 'PDF library not loaded. Please refresh the page.';
-        return;
+        throw new Error('PDF library not loaded. Please refresh the page.');
     }
     const arrayBuffer = await file.arrayBuffer();
     const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
@@ -87,24 +86,71 @@ async function extractTextFromPDF(file) {
     return textParts.join('\n\n');
 }
 
-pdfInput.addEventListener('change', async (e) => {
+// TXT: read as plain text
+function extractTextFromTxt(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result || '');
+        reader.onerror = () => reject(new Error('Could not read file'));
+        reader.readAsText(file);
+    });
+}
+
+// Word .docx: extract text (mammoth supports .docx; .doc has limited support)
+async function extractTextFromWord(file) {
+    if (typeof mammoth === 'undefined') {
+        throw new Error('Word library not loaded. Please refresh the page.');
+    }
+    const arrayBuffer = await file.arrayBuffer();
+    const result = await mammoth.extractRawText({ arrayBuffer });
+    return result.value;
+}
+
+// Route file by type and extract text
+async function extractTextFromFile(file) {
+    const type = file.type.toLowerCase();
+    const name = (file.name || '').toLowerCase();
+
+    if (type === 'application/pdf' || name.endsWith('.pdf')) {
+        return extractTextFromPDF(file);
+    }
+    if (type === 'text/plain' || name.endsWith('.txt')) {
+        return extractTextFromTxt(file);
+    }
+    if (
+        type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
+        type === 'application/msword' ||
+        name.endsWith('.docx') ||
+        name.endsWith('.doc')
+    ) {
+        try {
+            return await extractTextFromWord(file);
+        } catch (err) {
+            if (name.endsWith('.doc') && !name.endsWith('.docx')) {
+                throw new Error('Legacy .doc is not supported. Save as .docx and try again.');
+            }
+            throw err;
+        }
+    }
+
+    throw new Error('Unsupported file type. Use PDF, Word (.doc/.docx), or TXT.');
+}
+
+fileInput.addEventListener('change', async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.type !== 'application/pdf') {
-        status.textContent = 'Please select a PDF file.';
-        return;
-    }
-    status.textContent = 'Reading PDF...';
+
+    status.textContent = 'Reading file...';
     try {
-        const text = await extractTextFromPDF(file);
+        const text = await extractTextFromFile(file);
         textInput.value = text;
         charCount.textContent = text.length.toLocaleString();
         updateTextDisplay();
-        status.textContent = `Loaded PDF: ${file.name} (${text.length.toLocaleString()} characters)`;
+        status.textContent = `Loaded ${file.name} (${text.length.toLocaleString()} characters)`;
     } catch (err) {
-        status.textContent = 'Failed to read PDF: ' + (err.message || 'Unknown error');
+        status.textContent = 'Failed to read file: ' + (err.message || 'Unknown error');
     }
-    pdfInput.value = '';
+    fileInput.value = '';
 });
 
 // Function to create word-highlighted display

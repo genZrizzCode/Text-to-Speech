@@ -824,12 +824,12 @@ header h1 {
     margin-bottom: 0;
 }
 
-.pdf-upload-btn {
+.file-upload-btn {
     margin-bottom: 0;
     cursor: pointer;
 }
 
-.pdf-upload-btn input {
+.file-upload-btn input {
     display: none;
 }
 

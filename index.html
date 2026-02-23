@@ -43,14 +43,14 @@
             <div class="text-area-container">
                 <div class="text-input-header">
                     <label for="text-input">Enter your text:</label>
-                    <label class="pdf-upload-btn">
-                        <input type="file" id="pdf-input" accept=".pdf,application/pdf" hidden>
-                        <span class="btn btn-secondary btn-small">📄 Upload PDF</span>
+                    <label class="file-upload-btn">
+                        <input type="file" id="file-input" accept=".pdf,application/pdf,.txt,text/plain,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden>
+                        <span class="btn btn-secondary btn-small">📄 Upload PDF, Word, or TXT</span>
                     </label>
                 </div>
                 <textarea 
                     id="text-input" 
-                    placeholder="Type or paste your text here... No character limit! Or upload a PDF."
+                    placeholder="Type or paste your text here... No character limit! Or upload a PDF, Word (.docx), or TXT file."
                     rows="10"
                 ></textarea>
                 <div class="char-count">
@@ -111,6 +111,7 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
