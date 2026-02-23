@@ -811,6 +811,34 @@ header h1 {
     color: var(--text-secondary);
 }
 
+.text-input-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.text-input-header > label:first-child {
+    margin-bottom: 0;
+}
+
+.pdf-upload-btn {
+    margin-bottom: 0;
+    cursor: pointer;
+}
+
+.pdf-upload-btn input {
+    display: none;
+}
+
+.btn-small {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    min-width: auto;
+}
+
 #text-input {
     width: 100%;
     padding: 15px;

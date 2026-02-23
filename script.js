@@ -17,6 +17,12 @@ const textDisplay = document.getElementById('text-display');
 const darkModeToggle = document.getElementById('dark-mode-toggle');
 const moon = document.getElementById('moon');
 const starsContainer = document.getElementById('stars');
+const pdfInput = document.getElementById('pdf-input');
+
+// PDF.js worker (required for parsing PDFs in the browser)
+if (typeof pdfjsLib !== 'undefined') {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
 
 // Initialize Speech Synthesis
 const synth = window.speechSynthesis;
@@ -60,6 +66,45 @@ textInput.addEventListener('input', () => {
     const count = textInput.value.length;
     charCount.textContent = count.toLocaleString();
     updateTextDisplay();
+});
+
+// PDF upload: extract text and put in textarea
+async function extractTextFromPDF(file) {
+    if (typeof pdfjsLib === 'undefined') {
+        status.textContent = 'PDF library not loaded. Please refresh the page.';
+        return;
+    }
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+    const numPages = pdf.numPages;
+    const textParts = [];
+    for (let i = 1; i <= numPages; i++) {
+        const page = await pdf.getPage(i);
+        const content = await page.getTextContent();
+        const strings = content.items.map(item => item.str);
+        textParts.push(strings.join(' '));
+    }
+    return textParts.join('\n\n');
+}
+
+pdfInput.addEventListener('change', async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.type !== 'application/pdf') {
+        status.textContent = 'Please select a PDF file.';
+        return;
+    }
+    status.textContent = 'Reading PDF...';
+    try {
+        const text = await extractTextFromPDF(file);
+        textInput.value = text;
+        charCount.textContent = text.length.toLocaleString();
+        updateTextDisplay();
+        status.textContent = `Loaded PDF: ${file.name} (${text.length.toLocaleString()} characters)`;
+    } catch (err) {
+        status.textContent = 'Failed to read PDF: ' + (err.message || 'Unknown error');
+    }
+    pdfInput.value = '';
 });
 
 // Function to create word-highlighted display

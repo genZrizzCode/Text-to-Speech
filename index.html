@@ -41,10 +41,16 @@
 
         <main>
             <div class="text-area-container">
-                <label for="text-input">Enter your text:</label>
+                <div class="text-input-header">
+                    <label for="text-input">Enter your text:</label>
+                    <label class="pdf-upload-btn">
+                        <input type="file" id="pdf-input" accept=".pdf,application/pdf" hidden>
+                        <span class="btn btn-secondary btn-small">📄 Upload PDF</span>
+                    </label>
+                </div>
                 <textarea 
                     id="text-input" 
-                    placeholder="Type or paste your text here... No character limit!"
+                    placeholder="Type or paste your text here... No character limit! Or upload a PDF."
                     rows="10"
                 ></textarea>
                 <div class="char-count">
@@ -104,6 +110,7 @@
         </footer>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
