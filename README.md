@@ -14,7 +14,7 @@ A modern, beautiful text-to-speech website with **no character limit** using the
 
 ## How to Use
 
-1. Open `index.html` in a modern web browser (Chrome, Firefox, Safari, Edge)
+1. Open https://freetexttospeech.pages.dev in a modern web browser (Chrome, Firefox, Safari, Edge)
 2. Enter or paste your text in the text area
 3. Select a voice from the dropdown
 4. Adjust speed, pitch, and volume using the sliders
